@@ -1,0 +1,35 @@
+name: Expo Build (CI)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Install & Check Expo App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check formatting and lint
+        run: |
+          npx prettier --check .
+          npx eslint . --ext .js,.ts,.tsx
+
+      - name: Test TypeScript
+        run: npx tsc --noEmit
+
+      - name: Expo Publish Preview (Optional)
+        run: npx expo export --platform web
